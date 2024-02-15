@@ -2,22 +2,29 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
+
 export default function App() {
     const [playbackStatus, setPlaybackStatus] = useState("Unloaded");
     const [myPBO, setMyPBO] = useState(null);
+    const uri = { uri: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3' };
+    const localUri = require('./assets/sfx/sound.mp3');
 
     // load a sound
-    const loadSound = async () => {
-        const uri = { uri: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3' };
+    const loadSound = async (uri) => {
+
         const { sound } = await Audio.Sound.createAsync(uri);
         setMyPBO(sound);
         setPlaybackStatus("Loaded");
     }
     // play a sound
     const playSound = async () => {
-        await myPBO.playAsync();
-        setPlaybackStatus("Playing");
-    }
+        try {
+            await myPBO.playAsync();
+            setPlaybackStatus("Playing");
+        } catch (e) {
+            console.log(e)
+        };
+     }
 
     // pause a sound
     const pauseSound = async () => {
@@ -37,7 +44,7 @@ export default function App() {
     }
 
     useEffect(() => {
-        loadSound();
+        loadSound(uri);
         return myPBO
             ? () => {
                         unloadSound
